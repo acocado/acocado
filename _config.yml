@@ -1,0 +1,6 @@
+name: Acocado
+description: Multi-lingual product store
+collections:
+  products:
+    output: true
+    directory_path: assets/products
