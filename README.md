@@ -2,7 +2,7 @@
 
 Premium electronics store built with Jekyll and GitHub Pages.
 
-## Quick Start
+## Qck Start
 
 ### 1. Create GitHub Repository
 ```bash
