@@ -1,6 +1,35 @@
-name: Acocado
-description: Multi-lingual product store
+# Site settings
+title: acocado
+description: Premium electronics and audio equipment
+url: "https://acocado.com"
+baseurl: ""
+
+# Collections
 collections:
   products:
     output: true
-    permalink: /products/:path/
+    permalink: /products/:name/
+
+# Multi-language support
+languages: ["en", "bg"]
+default_language: "en"
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "products"
+    values:
+      layout: "product"
+      language: "en"
+
+# Build settings
+markdown: kramdown
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+# Plugins
+plugins:
+  - jekyll-feed
