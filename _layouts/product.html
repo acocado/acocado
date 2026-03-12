@@ -15,7 +15,7 @@ layout: default
                 </button>
                 {% endif %}
                 
-                <div class="thumbnail-container flex flex-col justify-between h-full w-full gap-4">
+                <div class="thumbnail-container flex flex-col gap-4">
                     {% if page.images %}
                         {% for image in page.images limit:3 %}
                             <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors aspect-square w-full" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
@@ -50,11 +50,11 @@ layout: default
             </div>
 
             <!-- Middle: Main Product Image -->
-            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-4 flex items-center justify-center relative w-full aspect-square md:aspect-auto" id="main-image-container">
+            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-4 flex items-center justify-center relative w-full aspect-square" id="main-image-container">
                 {% if page.images %}
                 <img id="main-product-image" src="{{ page.images[0] | relative_url }}" 
                      alt="{{ page.title }}"
-                     class="w-full h-full object-cover transition-opacity duration-300 z-10">
+                     class="max-w-full max-h-full object-contain transition-opacity duration-300 z-10">
                 {% else %}
                 <div class="text-[#8DC6BF] text-center z-10">
                     <p class="text-6xl mb-4">📷</p>
@@ -115,31 +115,12 @@ layout: default
     </div>
 </div>
 
-<!-- Script for Thumbnail Scrolling, Image swapping & Height Matching -->
+<!-- Script for Thumbnail Scrolling, Image swapping -->
 <script>
     let currentStartIndex = 0;
     const imagesData = document.querySelectorAll('#all-images-data .img-src');
     const imageUrls = Array.from(imagesData).map(span => span.getAttribute('data-src'));
     const container = document.querySelector('.thumbnail-container');
-    const mainImageContainer = document.getElementById('main-image-container');
-
-    // Match main image height to exactly the height of the 3 thumbnails + gaps
-    function matchHeights() {
-        if(window.innerWidth >= 768 && container && mainImageContainer) {
-            const containerHeight = container.offsetHeight;
-            if(containerHeight > 0) {
-                mainImageContainer.style.height = containerHeight + 'px';
-                mainImageContainer.style.aspectRatio = 'auto'; // release square lock on desktop
-            }
-        } else if (mainImageContainer) {
-             mainImageContainer.style.height = 'auto';
-             mainImageContainer.style.aspectRatio = '1 / 1';
-        }
-    }
-
-    // Call on load and resize
-    window.addEventListener('load', matchHeights);
-    window.addEventListener('resize', matchHeights);
 
     function renderThumbnails() {
         if (!container || imageUrls.length === 0) return;
@@ -171,9 +152,6 @@ layout: default
              div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent aspect-square w-full opacity-0 pointer-events-none';
              container.appendChild(div);
         }
-        
-        // Rematch heights after DOM updates
-        setTimeout(matchHeights, 50);
     }
 
     function scrollThumbnails(amount) {
@@ -205,5 +183,6 @@ layout: default
         scrollbar-width: none;  /* Firefox */
     }
 </style>
+
 
 
