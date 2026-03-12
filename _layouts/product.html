@@ -5,40 +5,40 @@ layout: default
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="bg-white rounded-sm border border-gray-100 p-8 shadow-sm">
         
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
             
             <!-- Left Side: Thumbnails -->
             <div class="hidden md:flex flex-col md:col-span-2 relative h-full">
                 {% if page.images.size > 3 %}
-                <button class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10" title="Scroll Up" onclick="scrollThumbnails(-1)">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                <button class="absolute -top-8 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Up" onclick="scrollThumbnails(-1)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                 </button>
                 {% endif %}
                 
-                <div class="thumbnail-container flex flex-col justify-between h-full w-full">
+                <div class="thumbnail-container flex flex-col justify-between h-full w-full gap-4">
                     {% if page.images %}
                         {% for image in page.images limit:3 %}
-                            <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors" style="height: calc(33.333% - 0.5rem);" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
+                            <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors aspect-square w-full" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
                                 <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="object-cover w-full h-full p-2">
                             </div>
                         {% endfor %}
                     {% else %}
                         <!-- Placeholders if no images -->
-                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center aspect-square w-full">
                             <span class="text-gray-300 text-xs">View 1</span>
                         </div>
-                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center aspect-square w-full">
                             <span class="text-gray-300 text-xs">View 2</span>
                         </div>
-                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center aspect-square w-full">
                             <span class="text-gray-300 text-xs">View 3</span>
                         </div>
                     {% endif %}
                 </div>
                 
                 {% if page.images.size > 3 %}
-                <button class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10" title="Scroll Down" onclick="scrollThumbnails(1)">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <button class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Down" onclick="scrollThumbnails(1)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <!-- Hidden all images for JS to load -->
                 <div id="all-images-data" style="display: none;">
@@ -50,8 +50,7 @@ layout: default
             </div>
 
             <!-- Middle: Main Product Image -->
-            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-4 flex items-center justify-center relative w-full" style="aspect-ratio: 1 / 1;">
-                <div class="absolute inset-0 m-4 border border-dashed border-gray-200 pointer-events-none hidden" id="main-placeholder"></div>
+            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-4 flex items-center justify-center relative w-full aspect-square md:aspect-auto" id="main-image-container">
                 {% if page.images %}
                 <img id="main-product-image" src="{{ page.images[0] | relative_url }}" 
                      alt="{{ page.title }}"
@@ -116,12 +115,31 @@ layout: default
     </div>
 </div>
 
-<!-- Script for Thumbnail Scrolling & Image swapping -->
+<!-- Script for Thumbnail Scrolling, Image swapping & Height Matching -->
 <script>
     let currentStartIndex = 0;
     const imagesData = document.querySelectorAll('#all-images-data .img-src');
     const imageUrls = Array.from(imagesData).map(span => span.getAttribute('data-src'));
     const container = document.querySelector('.thumbnail-container');
+    const mainImageContainer = document.getElementById('main-image-container');
+
+    // Match main image height to exactly the height of the 3 thumbnails + gaps
+    function matchHeights() {
+        if(window.innerWidth >= 768 && container && mainImageContainer) {
+            const containerHeight = container.offsetHeight;
+            if(containerHeight > 0) {
+                mainImageContainer.style.height = containerHeight + 'px';
+                mainImageContainer.style.aspectRatio = 'auto'; // release square lock on desktop
+            }
+        } else if (mainImageContainer) {
+             mainImageContainer.style.height = 'auto';
+             mainImageContainer.style.aspectRatio = '1 / 1';
+        }
+    }
+
+    // Call on load and resize
+    window.addEventListener('load', matchHeights);
+    window.addEventListener('resize', matchHeights);
 
     function renderThumbnails() {
         if (!container || imageUrls.length === 0) return;
@@ -132,8 +150,7 @@ layout: default
         for (let i = currentStartIndex; i < end; i++) {
             const url = imageUrls[i];
             const div = document.createElement('div');
-            div.className = 'thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors';
-            div.style.height = 'calc(33.333% - 0.5rem)';
+            div.className = 'thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors aspect-square w-full';
             div.onclick = () => {
                 document.getElementById('main-product-image').src = url;
             };
@@ -151,10 +168,12 @@ layout: default
         const numToPad = 3 - (end - currentStartIndex);
         for(let i=0; i < numToPad; i++) {
              const div = document.createElement('div');
-             div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent';
-             div.style.height = 'calc(33.333% - 0.5rem)';
+             div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent aspect-square w-full opacity-0 pointer-events-none';
              container.appendChild(div);
         }
+        
+        // Rematch heights after DOM updates
+        setTimeout(matchHeights, 50);
     }
 
     function scrollThumbnails(amount) {
@@ -186,4 +205,5 @@ layout: default
         scrollbar-width: none;  /* Firefox */
     }
 </style>
+
 
