@@ -8,38 +8,38 @@ layout: default
         <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
             
             <!-- Left Side: Thumbnails -->
-            <div class="hidden md:flex flex-col md:col-span-2 space-y-4">
-                <div class="thumbnail-container flex flex-col space-y-4 overflow-y-auto max-h-[500px] scrollbar-hide">
+            <div class="hidden md:flex flex-col md:col-span-2 relative h-full">
+                {% if page.images.size > 3 %}
+                <button class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10" title="Scroll Up" onclick="scrollThumbnails(-1)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                </button>
+                {% endif %}
+                
+                <div class="thumbnail-container flex flex-col justify-between h-full w-full">
                     {% if page.images %}
                         {% for image in page.images limit:3 %}
-                            <div class="aspect-square bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
+                            <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors" style="height: calc(33.333% - 0.5rem);" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
                                 <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="object-cover w-full h-full p-2">
                             </div>
                         {% endfor %}
                     {% else %}
                         <!-- Placeholders if no images -->
-                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
                             <span class="text-gray-300 text-xs">View 1</span>
                         </div>
-                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
                             <span class="text-gray-300 text-xs">View 2</span>
                         </div>
-                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                        <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="height: calc(33.333% - 0.5rem);">
                             <span class="text-gray-300 text-xs">View 3</span>
                         </div>
                     {% endif %}
                 </div>
                 
                 {% if page.images.size > 3 %}
-                <!-- Scroll Controls -->
-                <div class="flex justify-center gap-4 text-[#8DC6BF] pt-2">
-                    <button class="hover:text-[#F97B4F] transition-colors focus:outline-none" title="Scroll Up" onclick="scrollThumbnails(-100)">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                    </button>
-                    <button class="hover:text-[#F97B4F] transition-colors focus:outline-none" title="Scroll Down" onclick="scrollThumbnails(100)">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                </div>
+                <button class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10" title="Scroll Down" onclick="scrollThumbnails(1)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
                 <!-- Hidden all images for JS to load -->
                 <div id="all-images-data" style="display: none;">
                     {% for image in page.images %}
@@ -50,13 +50,14 @@ layout: default
             </div>
 
             <!-- Middle: Main Product Image -->
-            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-8 flex items-center justify-center aspect-square">
+            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-4 flex items-center justify-center relative w-full" style="aspect-ratio: 1 / 1;">
+                <div class="absolute inset-0 m-4 border border-dashed border-gray-200 pointer-events-none hidden" id="main-placeholder"></div>
                 {% if page.images %}
                 <img id="main-product-image" src="{{ page.images[0] | relative_url }}" 
                      alt="{{ page.title }}"
-                     class="max-w-full h-auto object-contain transition-opacity duration-300">
+                     class="w-full h-full object-cover transition-opacity duration-300 z-10">
                 {% else %}
-                <div class="text-[#8DC6BF] text-center">
+                <div class="text-[#8DC6BF] text-center z-10">
                     <p class="text-6xl mb-4">📷</p>
                 </div>
                 {% endif %}
@@ -131,7 +132,8 @@ layout: default
         for (let i = currentStartIndex; i < end; i++) {
             const url = imageUrls[i];
             const div = document.createElement('div');
-            div.className = 'aspect-square bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors';
+            div.className = 'thumbnail-item bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors';
+            div.style.height = 'calc(33.333% - 0.5rem)';
             div.onclick = () => {
                 document.getElementById('main-product-image').src = url;
             };
@@ -143,6 +145,15 @@ layout: default
             
             div.appendChild(img);
             container.appendChild(div);
+        }
+        
+        // Pad with empty blocks to maintain alignment if less than 3 images remain
+        const numToPad = 3 - (end - currentStartIndex);
+        for(let i=0; i < numToPad; i++) {
+             const div = document.createElement('div');
+             div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent';
+             div.style.height = 'calc(33.333% - 0.5rem)';
+             container.appendChild(div);
         }
     }
 
@@ -160,11 +171,6 @@ layout: default
                 currentStartIndex--;
             }
         }
-        renderThumbnails();
-    }
-    
-    // Initial render if we have the data
-    if (imageUrls.length > 3) {
         renderThumbnails();
     }
 </script>
