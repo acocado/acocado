@@ -7,7 +7,7 @@ category: audio
 language: en
 featured: true
 images:
-  - /products/tascam-portacapture-x8/1.webp
+  - /products/tascam-portacapture-x8/1.jpeg
   - /products/tascam-portacapture-x8/2.jpg.webp
   - /products/tascam-portacapture-x8/3.jpg.webp
   - /products/tascam-portacapture-x8/4.jpg.webp
