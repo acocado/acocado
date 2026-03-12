@@ -8,7 +8,7 @@ baseurl: ""
 collections:
   products:
     output: true
-    permalink: /products/:name/
+    permalink: /products/:path/
 
 # Multi-language support
 languages: ["en", "bg"]
