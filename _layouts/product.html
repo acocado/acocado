@@ -2,77 +2,83 @@
 layout: default
 ---
 
-<div class="container mx-auto px-6 py-12 max-w-5xl">
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-            <!-- Product Image -->
-            <div class="bg-gray-100 rounded-xl p-8 flex items-center justify-center">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-sm border border-gray-100 p-8 shadow-sm">
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+            
+            <!-- Left Side: Thumbnails (Placeholder for future) -->
+            <div class="hidden md:block md:col-span-2 space-y-4">
+                <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                    <span class="text-gray-300 text-xs">View 1</span>
+                </div>
+                <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                    <span class="text-gray-300 text-xs">View 2</span>
+                </div>
+            </div>
+
+            <!-- Middle: Main Product Image -->
+            <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-8 flex items-center justify-center aspect-square">
                 {% if page.images %}
                 <img src="{{ page.images[0] }}" 
                      alt="{{ page.title }}"
                      class="max-w-full h-auto object-contain">
                 {% else %}
-                <div class="text-gray-400 text-center">
-                    <p class="text-6xl mb-4">📦</p>
-                    <p>Product image</p>
+                <div class="text-[#8DC6BF] text-center">
+                    <p class="text-6xl mb-4">📷</p>
                 </div>
                 {% endif %}
             </div>
 
-            <!-- Product Details -->
-            <div class="flex flex-col justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ page.title }}</h1>
-                    
-                    <div class="prose prose-lg text-gray-600 mb-6">
-                        {{ content }}
-                    </div>
-
-                    {% if page.features %}
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Key Features:</h3>
-                        <ul class="space-y-2">
-                            {% for feature in page.features %}
-                            <li class="flex items-start gap-2 text-gray-600">
-                                <span class="text-green-500 mt-1">✓</span>
-                                <span>{{ feature }}</span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
+            <!-- Right Side: Product Details & Checkout -->
+            <div class="md:col-span-5 flex flex-col">
+                
+                <h1 class="text-4xl font-bold text-[#584053] mb-2 tracking-tight">{{ page.title }}</h1>
+                
+                <div class="text-3xl text-[#F97B4F] mb-8 font-medium">
+                    €{{ page.price | default: "0.00" }}
+                </div>
+                
+                <div class="prose prose-sm text-gray-600 mb-10 leading-relaxed">
+                    {{ content }}
                 </div>
 
-                <div>
-                    <div class="border-t border-gray-200 pt-6 mb-6">
-                        <div class="flex items-baseline gap-2 mb-4">
-                            <span class="text-5xl font-bold text-gray-900">€{{ page.price }}</span>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <a href="{{ page.stripe_link }}" 
-                           class="flex-1 bg-gray-900 text-white text-center py-4 px-6 rounded-xl font-semibold text-lg hover:bg-gray-800 transition-colors">
-                            Pay with Card
-                        </a>
-                        <a href="{{ page.opennode_link }}"
-                           class="flex-1 border-2 border-gray-900 text-gray-900 text-center py-4 px-6 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-colors">
-                            Bitcoin
-                        </a>
-                    </div>
-
-                    <p class="text-sm text-gray-500 text-center mt-4">
-                        Secure checkout via Stripe or OpenNode
-                    </p>
+                <!-- Action Buttons -->
+                <div class="flex flex-col gap-4 mb-10 mt-auto">
+                    <a href="{{ page.stripe_link | default: '#' }}" 
+                       class="w-full bg-[#584053] text-white text-center py-4 px-6 font-bold uppercase tracking-widest text-sm hover:bg-[#F97B4F] transition-colors duration-300">
+                        Buy with Stripe
+                    </a>
+                    <a href="{{ page.opennode_link | default: '#' }}"
+                       class="w-full border-2 border-[#584053] text-[#584053] text-center py-4 px-6 font-bold uppercase tracking-widest text-sm hover:bg-[#584053] hover:text-white transition-colors duration-300">
+                        Buy with Bitcoin
+                    </a>
                 </div>
+
+                <!-- Payment & Shipping Info -->
+                <div class="border-t border-gray-100 pt-6 space-y-4 text-sm text-gray-500">
+                    <div class="flex items-start gap-3">
+                        <span class="text-[#FCBC66]">💳</span>
+                        <p><strong>Accepted Payments:</strong> Visa, Mastercard, AMEX, Apple Pay, and Bitcoin Lightning Network.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-[#8DC6BF]">📦</span>
+                        <p><strong>Shipping:</strong> Ships within 48 hours. Free delivery in the EU on orders over €100. Global shipping calculated at checkout.</p>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-[#F97B4F]">↩️</span>
+                        <p><strong>Returns:</strong> 14-day hassle-free return policy. Vintage electronics are tested and certified before dispatch.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <!-- Back to Products -->
-    <div class="text-center mt-8">
-        <a href="/" class="text-gray-600 hover:text-gray-900 transition-colors">
-            ← Back to all products
+    <div class="mt-12">
+        <a href="/" class="text-[#8DC6BF] hover:text-[#F97B4F] transition-colors text-sm uppercase tracking-widest font-bold">
+            ← Back to Catalog
         </a>
     </div>
 </div>
