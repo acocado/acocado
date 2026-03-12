@@ -7,20 +7,20 @@ category: audio
 language: en
 featured: true
 images:
-  - 1.webp
-  - 2.jpg.webp
-  - 3.jpg.webp
-  - 4.jpg.webp
-  - 5.jpg.webp
-  - 6.jpg.webp
-  - 7.jpg
-  - 8.jpg.webp
-  - 9.jpg
-  - 10.jpg
-  - 11.jpg.webp
-  - 12.jpg.webp
-  - 13.jpg.webp
-  - 14.jpg.webp
+  - /products/tascam-portacapture-x8/1.webp
+  - /products/tascam-portacapture-x8/2.jpg.webp
+  - /products/tascam-portacapture-x8/3.jpg.webp
+  - /products/tascam-portacapture-x8/4.jpg.webp
+  - /products/tascam-portacapture-x8/5.jpg.webp
+  - /products/tascam-portacapture-x8/6.jpg.webp
+  - /products/tascam-portacapture-x8/7.jpg
+  - /products/tascam-portacapture-x8/8.jpg.webp
+  - /products/tascam-portacapture-x8/9.jpg
+  - /products/tascam-portacapture-x8/10.jpg
+  - /products/tascam-portacapture-x8/11.jpg.webp
+  - /products/tascam-portacapture-x8/12.jpg.webp
+  - /products/tascam-portacapture-x8/13.jpg.webp
+  - /products/tascam-portacapture-x8/14.jpg.webp
 features:
   - Portable 6+2 lane high resolution 32-bit/192-kHz recorder
   - Large colour touch screen for easy operation
