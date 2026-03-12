@@ -7,22 +7,54 @@ layout: default
         
         <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
             
-            <!-- Left Side: Thumbnails (Placeholder for future) -->
-            <div class="hidden md:block md:col-span-2 space-y-4">
-                <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
-                    <span class="text-gray-300 text-xs">View 1</span>
+            <!-- Left Side: Thumbnails -->
+            <div class="hidden md:flex flex-col md:col-span-2 space-y-4">
+                <div class="thumbnail-container flex flex-col space-y-4 overflow-y-auto max-h-[500px] scrollbar-hide">
+                    {% if page.images %}
+                        {% for image in page.images limit:3 %}
+                            <div class="aspect-square bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors" onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
+                                <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="object-cover w-full h-full p-2">
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Placeholders if no images -->
+                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <span class="text-gray-300 text-xs">View 1</span>
+                        </div>
+                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <span class="text-gray-300 text-xs">View 2</span>
+                        </div>
+                        <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <span class="text-gray-300 text-xs">View 3</span>
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="aspect-square bg-gray-50 border border-gray-100 flex items-center justify-center">
-                    <span class="text-gray-300 text-xs">View 2</span>
+                
+                {% if page.images.size > 3 %}
+                <!-- Scroll Controls -->
+                <div class="flex justify-center gap-4 text-[#8DC6BF] pt-2">
+                    <button class="hover:text-[#F97B4F] transition-colors focus:outline-none" title="Scroll Up" onclick="scrollThumbnails(-100)">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                    </button>
+                    <button class="hover:text-[#F97B4F] transition-colors focus:outline-none" title="Scroll Down" onclick="scrollThumbnails(100)">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
                 </div>
+                <!-- Hidden all images for JS to load -->
+                <div id="all-images-data" style="display: none;">
+                    {% for image in page.images %}
+                        <span class="img-src" data-src="{{ image | relative_url }}"></span>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
 
             <!-- Middle: Main Product Image -->
             <div class="md:col-span-5 bg-[#fdfdfd] border border-gray-100 p-8 flex items-center justify-center aspect-square">
                 {% if page.images %}
-                <img src="{{ page.images[0] }}" 
+                <img id="main-product-image" src="{{ page.images[0] | relative_url }}" 
                      alt="{{ page.title }}"
-                     class="max-w-full h-auto object-contain">
+                     class="max-w-full h-auto object-contain transition-opacity duration-300">
                 {% else %}
                 <div class="text-[#8DC6BF] text-center">
                     <p class="text-6xl mb-4">📷</p>
@@ -82,3 +114,70 @@ layout: default
         </a>
     </div>
 </div>
+
+<!-- Script for Thumbnail Scrolling & Image swapping -->
+<script>
+    let currentStartIndex = 0;
+    const imagesData = document.querySelectorAll('#all-images-data .img-src');
+    const imageUrls = Array.from(imagesData).map(span => span.getAttribute('data-src'));
+    const container = document.querySelector('.thumbnail-container');
+
+    function renderThumbnails() {
+        if (!container || imageUrls.length === 0) return;
+        
+        container.innerHTML = '';
+        const end = Math.min(currentStartIndex + 3, imageUrls.length);
+        
+        for (let i = currentStartIndex; i < end; i++) {
+            const url = imageUrls[i];
+            const div = document.createElement('div');
+            div.className = 'aspect-square bg-[#fdfdfd] border border-gray-100 flex items-center justify-center cursor-pointer hover:border-[#FCBC66] transition-colors';
+            div.onclick = () => {
+                document.getElementById('main-product-image').src = url;
+            };
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = `Thumbnail ${i + 1}`;
+            img.className = 'object-cover w-full h-full p-2';
+            
+            div.appendChild(img);
+            container.appendChild(div);
+        }
+    }
+
+    function scrollThumbnails(amount) {
+        if (imageUrls.length <= 3) return;
+        
+        if (amount > 0) {
+            // Scroll down
+            if (currentStartIndex + 3 < imageUrls.length) {
+                currentStartIndex++;
+            }
+        } else {
+            // Scroll up
+            if (currentStartIndex > 0) {
+                currentStartIndex--;
+            }
+        }
+        renderThumbnails();
+    }
+    
+    // Initial render if we have the data
+    if (imageUrls.length > 3) {
+        renderThumbnails();
+    }
+</script>
+
+<style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .scrollbar-hide {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+</style>
+
