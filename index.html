@@ -5,8 +5,8 @@ title: Home
 
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="mb-12">
-        <h2 class="text-2xl font-bold text-[#584053] tracking-tight">Latest Arrivals</h2>
-        <p class="text-[#8DC6BF] mt-2 text-sm uppercase tracking-widest font-medium">Curated Electronics & Vintage Gear</p>
+        <h2 class="text-5xl text-[#584053] tracking-tight ogg-heading">Latest Arrivals</h2>
+        <p class="text-[#8DC6BF] mt-4 text-sm uppercase tracking-widest font-medium">Curated Electronics & Vintage Gear</p>
     </div>
 
     <!-- Product Grid: 4-5 items per row, 1x1 ratio placeholders -->
@@ -16,7 +16,7 @@ title: Home
                 <!-- 1x1 Image Container -->
                 <div class="aspect-square bg-[#fdfdfd] border border-gray-100 flex items-center justify-center mb-4 overflow-hidden transition-all duration-300 group-hover:border-[#FCBC66] group-hover:shadow-sm relative">
                     {% if product.images %}
-                        <img src="{{ product.images[0] }}" alt="{{ product.title }}" class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500">
+                        <img src="{{ product.images[0] | relative_url }}" alt="{{ product.title }}" class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500">
                     {% else %}
                         <!-- Placeholder -->
                         <div class="text-[#8DC6BF] opacity-50 group-hover:opacity-100 transition-opacity">
@@ -30,7 +30,7 @@ title: Home
 
                 <!-- Product Info -->
                 <div class="text-center">
-                    <h3 class="text-[#584053] font-bold text-sm tracking-tight mb-1 truncate">
+                    <h3 class="text-[#584053] text-xl tracking-tight mb-1 truncate ogg-heading">
                         <a href="{{ product.url }}" class="hover:text-[#F97B4F] transition-colors">{{ product.title | default: product.relative_path }}</a>
                     </h3>
                     <p class="text-[#F97B4F] font-medium text-sm">€{{ product.price | default: "0.00" }}</p>
@@ -43,4 +43,5 @@ title: Home
         {% endfor %}
     </div>
 </section>
+
 
