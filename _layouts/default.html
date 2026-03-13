@@ -9,22 +9,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
         
-        @font-face {
-            font-family: 'Ogg';
-            src: url('/assets/fonts/Ogg-Regular.woff2') format('woff2'),
-                 url('/assets/fonts/Ogg-Regular.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Ogg';
-            src: url('/assets/fonts/Ogg-Italic.woff2') format('woff2'),
-                 url('/assets/fonts/Ogg-RegularItalic.ttf') format('truetype');
-            font-weight: normal;
-            font-style: italic;
-        }
-        
         body { 
             font-family: 'Space Grotesk', sans-serif; 
             background-color: #fdfdfd; /* Very light, warm off-white */
@@ -32,13 +16,9 @@
         }
         
         .brand-text {
-            font-family: 'Ogg', serif;
-            font-weight: normal;
-        }
-
-        h1, h2, h3, .ogg-heading {
-            font-family: 'Ogg', serif;
-            font-weight: normal;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.05em;
         }
 
         .nav-link {
@@ -58,7 +38,7 @@
             <div class="flex items-center justify-between">
                 <!-- Left side: Logo & Home -->
                 <div class="flex items-baseline gap-6">
-                    <a href="/" class="brand-text text-4xl text-[#584053] tracking-tight">acocado</a>
+                    <a href="/" class="brand-text text-3xl text-[#584053]">acocado</a>
                     <a href="/" class="hidden sm:block text-sm font-medium nav-link uppercase tracking-wider">Home</a>
                 </div>
                 
@@ -82,7 +62,7 @@
     <footer class="border-t border-gray-200 mt-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col items-center justify-center text-[#8DC6BF] text-sm">
-                <p class="font-medium mb-2 brand-text text-xl text-[#584053]">acocado © 2026</p>
+                <p class="font-medium mb-2">acocado © 2026</p>
                 <p>Curated Vintage & Modern Electronics</p>
             </div>
         </div>
