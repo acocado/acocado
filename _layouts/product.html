@@ -7,79 +7,115 @@ layout: default
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
 
-            <!-- Image gallery: thumbnails (left) + main image -->
-            <div class="md:col-span-7 hidden md:flex gap-2">
+            <!-- ═══════════════════════════════════════════════════════
+                 IMAGE GALLERY  (hidden on mobile)
+                 Layout: flex row, align-items: flex-start
+                   - Thumbnail column: flex:1  → width = W/4
+                     Each thumbnail: aspect-ratio:1/1 → height = W/4
+                     3 thumbnails stacked (no gap) → column height = 3W/4
+                   - Main image: flex:3, aspect-ratio:1/1 → width = height = 3W/4
+                 Result: column height = main image height → perfect top/bottom alignment
+                         every thumbnail is exactly square ✓
+            ═══════════════════════════════════════════════════════ -->
+            <div id="gallery-wrapper" class="md:col-span-7"
+                 style="display:none; gap:8px; align-items:flex-start; padding-top:32px; padding-bottom:32px;">
 
-                <!-- Left: Thumbnail column — flex:1 width, height stretches to match main image -->
-                <div class="relative flex flex-col" style="flex: 1;" id="thumbnail-column">
+                <!-- ── Thumbnail column ── -->
+                <div id="thumbnail-column"
+                     style="flex:1; display:flex; flex-direction:column; position:relative;">
+
+                    <!-- Up arrow (only rendered when >3 images) -->
                     {% if page.images.size > 3 %}
-                    <button class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Up" onclick="scrollThumbnails(-1)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                    <button onclick="scrollThumbnails(-1)" title="Previous images"
+                            style="position:absolute; top:-28px; left:50%; transform:translateX(-50%);
+                                   width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+                                   background:#fff; border:1px solid #f3f4f6; border-radius:50%;
+                                   color:#8DC6BF; cursor:pointer; z-index:10; box-shadow:0 1px 3px rgba(0,0,0,.08);"
+                            onmouseover="this.style.color='#F97B4F'" onmouseout="this.style.color='#8DC6BF'">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                        </svg>
                     </button>
                     {% endif %}
 
-                    <!-- thumbnail-container: flex column, children get flex:1 so each = 1/3 of column height -->
-                    <div class="thumbnail-container flex flex-col" style="flex: 1;">
+                    <!-- Thumbnails — no gap between them so column height = exactly 3 × thumbnail_width -->
+                    <div id="thumbnail-container" style="display:flex; flex-direction:column;">
                         {% if page.images %}
                             {% for image in page.images limit:3 %}
-                                <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 overflow-hidden cursor-pointer hover:border-[#FCBC66] transition-colors"
-                                     style="flex: 1;"
-                                     onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
-                                    <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="w-full h-full object-cover">
-                                </div>
+                            <div class="thumbnail-item"
+                                 style="width:100%; aspect-ratio:1/1; overflow:hidden; background:#fdfdfd;
+                                        border:1px solid #f3f4f6; cursor:pointer; transition:border-color .2s;"
+                                 onclick="swapMain('{{ image | relative_url }}')"
+                                 onmouseover="this.style.borderColor='#FCBC66'"
+                                 onmouseout="this.style.borderColor='#f3f4f6'">
+                                <img src="{{ image | relative_url }}" alt="View {{ forloop.index }}"
+                                     style="width:100%; height:100%; object-fit:cover; display:block;">
+                            </div>
                             {% endfor %}
                         {% else %}
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
-                                <span class="text-gray-300 text-xs">View 1</span>
+                            {% for i in (1..3) %}
+                            <div style="width:100%; aspect-ratio:1/1; background:#f9fafb;
+                                        border:1px solid #f3f4f6; display:flex; align-items:center; justify-content:center;">
+                                <span style="color:#d1d5db; font-size:11px;">View {{ i }}</span>
                             </div>
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
-                                <span class="text-gray-300 text-xs">View 2</span>
-                            </div>
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
-                                <span class="text-gray-300 text-xs">View 3</span>
-                            </div>
+                            {% endfor %}
                         {% endif %}
                     </div>
 
+                    <!-- Down arrow (only rendered when >3 images) -->
                     {% if page.images.size > 3 %}
-                    <button class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Down" onclick="scrollThumbnails(1)">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <button onclick="scrollThumbnails(1)" title="More images"
+                            style="position:absolute; bottom:-28px; left:50%; transform:translateX(-50%);
+                                   width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+                                   background:#fff; border:1px solid #f3f4f6; border-radius:50%;
+                                   color:#8DC6BF; cursor:pointer; z-index:10; box-shadow:0 1px 3px rgba(0,0,0,.08);"
+                            onmouseover="this.style.color='#F97B4F'" onmouseout="this.style.color='#8DC6BF'">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </button>
-                    <div id="all-images-data" style="display: none;">
+
+                    <!-- Image URL store for JS scrolling -->
+                    <div id="all-images-data" style="display:none;">
                         {% for image in page.images %}
-                            <span class="img-src" data-src="{{ image | relative_url }}"></span>
+                        <span class="img-src" data-src="{{ image | relative_url }}"></span>
                         {% endfor %}
                     </div>
                     {% endif %}
-                </div>
 
-                <!-- Right: Main image — flex:3 width, aspect-ratio 1:1 -->
-                <div class="bg-[#fdfdfd] border border-gray-100 overflow-hidden" id="main-image-container"
-                     style="flex: 3; aspect-ratio: 1 / 1;">
+                </div><!-- /thumbnail-column -->
+
+                <!-- ── Main image: flex:3 width, 1:1 ratio, fills edge-to-edge ── -->
+                <div id="main-image-container"
+                     style="flex:3; aspect-ratio:1/1; overflow:hidden; background:#fdfdfd; border:1px solid #f3f4f6;">
                     {% if page.images %}
-                    <img id="main-product-image" src="{{ page.images[0] | relative_url }}"
+                    <img id="main-product-image"
+                         src="{{ page.images[0] | relative_url }}"
                          alt="{{ page.title }}"
-                         class="w-full h-full object-cover transition-opacity duration-300">
+                         style="width:100%; height:100%; object-fit:cover; display:block; transition:opacity .3s;">
                     {% else %}
-                    <div class="w-full h-full flex items-center justify-center text-[#8DC6BF]">
-                        <p class="text-6xl">📷</p>
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#8DC6BF;">
+                        <p style="font-size:3.75rem;">📷</p>
                     </div>
                     {% endif %}
                 </div>
-            </div>
 
-            <!-- Mobile: main image only (thumbnails hidden on small screens) -->
-            <div class="md:hidden col-span-1 bg-[#fdfdfd] border border-gray-100 overflow-hidden aspect-square">
+            </div><!-- /gallery-wrapper -->
+
+            <!-- Mobile: main image only -->
+            <div class="md:hidden col-span-1"
+                 style="aspect-ratio:1/1; overflow:hidden; background:#fdfdfd; border:1px solid #f3f4f6;">
                 {% if page.images %}
-                <img src="{{ page.images[0] | relative_url }}" alt="{{ page.title }}" class="w-full h-full object-cover">
+                <img src="{{ page.images[0] | relative_url }}" alt="{{ page.title }}"
+                     style="width:100%; height:100%; object-fit:cover; display:block;">
                 {% else %}
-                <div class="w-full h-full flex items-center justify-center text-[#8DC6BF]">
-                    <p class="text-6xl">📷</p>
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#8DC6BF;">
+                    <p style="font-size:3.75rem;">📷</p>
                 </div>
                 {% endif %}
             </div>
 
-            <!-- Right Side: Product Details & Checkout -->
+            <!-- ── Product details & checkout ── -->
             <div class="md:col-span-5 flex flex-col">
 
                 <h1 class="text-4xl font-bold text-[#584053] mb-2 tracking-tight">{{ page.title }}</h1>
@@ -92,7 +128,6 @@ layout: default
                     {{ content }}
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="flex flex-col gap-4 mb-10 mt-auto">
                     <a href="{{ page.stripe_link | default: '#' }}"
                        class="w-full bg-[#584053] text-white text-center py-4 px-6 font-bold uppercase tracking-widest text-sm hover:bg-[#F97B4F] transition-colors duration-300">
@@ -104,7 +139,6 @@ layout: default
                     </a>
                 </div>
 
-                <!-- Payment & Shipping Info -->
                 <div class="border-t border-gray-100 pt-6 space-y-4 text-sm text-gray-500">
                     <div class="flex items-start gap-3">
                         <span class="text-[#FCBC66]">💳</span>
@@ -124,7 +158,6 @@ layout: default
         </div>
     </div>
 
-    <!-- Back to Products -->
     <div class="mt-12">
         <a href="/" class="text-[#8DC6BF] hover:text-[#F97B4F] transition-colors text-sm uppercase tracking-widest font-bold">
             ← Back to Catalog
@@ -132,59 +165,70 @@ layout: default
     </div>
 </div>
 
-<!-- Script for Thumbnail Scrolling, Image swapping -->
 <script>
+    // Show gallery only on md+ screens
+    (function () {
+        const gw = document.getElementById('gallery-wrapper');
+        if (!gw) return;
+        function applyDisplay() {
+            gw.style.display = window.innerWidth >= 768 ? 'flex' : 'none';
+        }
+        applyDisplay();
+        window.addEventListener('resize', applyDisplay);
+    })();
+
+    // Image swap
+    function swapMain(src) {
+        const img = document.getElementById('main-product-image');
+        if (img) img.src = src;
+    }
+
+    // Thumbnail scrolling (only active when >3 images)
     let currentStartIndex = 0;
     const imagesData = document.querySelectorAll('#all-images-data .img-src');
-    const imageUrls = Array.from(imagesData).map(span => span.getAttribute('data-src'));
-    const container = document.querySelector('.thumbnail-container');
+    const imageUrls = Array.from(imagesData).map(s => s.getAttribute('data-src'));
+    const container = document.getElementById('thumbnail-container');
+
+    function makeThumbnail(url, index) {
+        const div = document.createElement('div');
+        div.className = 'thumbnail-item';
+        div.style.cssText = 'width:100%; aspect-ratio:1/1; overflow:hidden; background:#fdfdfd; border:1px solid #f3f4f6; cursor:pointer; transition:border-color .2s;';
+        div.onclick = () => swapMain(url);
+        div.onmouseover = () => div.style.borderColor = '#FCBC66';
+        div.onmouseout  = () => div.style.borderColor = '#f3f4f6';
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'View ' + (index + 1);
+        img.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
+
+        div.appendChild(img);
+        return div;
+    }
+
+    function makePlaceholder() {
+        const div = document.createElement('div');
+        div.style.cssText = 'width:100%; aspect-ratio:1/1; background:#fdfdfd; border:1px solid transparent; pointer-events:none; opacity:0;';
+        return div;
+    }
 
     function renderThumbnails() {
         if (!container || imageUrls.length === 0) return;
-
         container.innerHTML = '';
         const end = Math.min(currentStartIndex + 3, imageUrls.length);
-
         for (let i = currentStartIndex; i < end; i++) {
-            const url = imageUrls[i];
-            const div = document.createElement('div');
-            div.className = 'thumbnail-item bg-[#fdfdfd] border border-gray-100 overflow-hidden cursor-pointer hover:border-[#FCBC66] transition-colors';
-            div.style.flex = '1';
-            div.onclick = () => {
-                document.getElementById('main-product-image').src = url;
-            };
-
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = `Thumbnail ${i + 1}`;
-            img.className = 'w-full h-full object-cover';
-
-            div.appendChild(img);
-            container.appendChild(div);
+            container.appendChild(makeThumbnail(imageUrls[i], i));
         }
-
-        // Pad with empty blocks to maintain alignment if fewer than 3 images remain
-        const numToPad = 3 - (end - currentStartIndex);
-        for (let i = 0; i < numToPad; i++) {
-            const div = document.createElement('div');
-            div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent opacity-0 pointer-events-none';
-            div.style.flex = '1';
-            container.appendChild(div);
+        const pad = 3 - (end - currentStartIndex);
+        for (let i = 0; i < pad; i++) {
+            container.appendChild(makePlaceholder());
         }
     }
 
-    function scrollThumbnails(amount) {
+    function scrollThumbnails(dir) {
         if (imageUrls.length <= 3) return;
-
-        if (amount > 0) {
-            if (currentStartIndex + 3 < imageUrls.length) {
-                currentStartIndex++;
-            }
-        } else {
-            if (currentStartIndex > 0) {
-                currentStartIndex--;
-            }
-        }
+        if (dir > 0 && currentStartIndex + 3 < imageUrls.length) currentStartIndex++;
+        if (dir < 0 && currentStartIndex > 0) currentStartIndex--;
         renderThumbnails();
     }
 </script>
