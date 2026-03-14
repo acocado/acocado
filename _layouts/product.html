@@ -7,33 +7,35 @@ layout: default
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
 
-            <!-- Image gallery: thumbnails (left) + main image (combined into col-span-7) -->
-            <div class="md:col-span-7 hidden md:grid gap-2" style="grid-template-columns: 1fr 3fr;">
+            <!-- Image gallery: thumbnails (left) + main image -->
+            <div class="md:col-span-7 hidden md:flex gap-2">
 
-                <!-- Left: Thumbnail column (3 rows, no inner gap so each cell is 1:1) -->
-                <div class="grid relative" style="grid-template-rows: 1fr 1fr 1fr;" id="thumbnail-column">
+                <!-- Left: Thumbnail column — flex:1 width, height stretches to match main image -->
+                <div class="relative flex flex-col" style="flex: 1;" id="thumbnail-column">
                     {% if page.images.size > 3 %}
                     <button class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Up" onclick="scrollThumbnails(-1)">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                     </button>
                     {% endif %}
 
-                    <div class="thumbnail-container contents">
+                    <!-- thumbnail-container: flex column, children get flex:1 so each = 1/3 of column height -->
+                    <div class="thumbnail-container flex flex-col" style="flex: 1;">
                         {% if page.images %}
                             {% for image in page.images limit:3 %}
                                 <div class="thumbnail-item bg-[#fdfdfd] border border-gray-100 overflow-hidden cursor-pointer hover:border-[#FCBC66] transition-colors"
+                                     style="flex: 1;"
                                      onclick="document.getElementById('main-product-image').src='{{ image | relative_url }}'">
-                                    <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="object-cover w-full h-full">
+                                    <img src="{{ image | relative_url }}" alt="Thumbnail {{ forloop.index }}" class="w-full h-full object-cover">
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
                                 <span class="text-gray-300 text-xs">View 1</span>
                             </div>
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
                                 <span class="text-gray-300 text-xs">View 2</span>
                             </div>
-                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center">
+                            <div class="thumbnail-item bg-gray-50 border border-gray-100 flex items-center justify-center" style="flex: 1;">
                                 <span class="text-gray-300 text-xs">View 3</span>
                             </div>
                         {% endif %}
@@ -43,7 +45,6 @@ layout: default
                     <button class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[#8DC6BF] hover:text-[#F97B4F] transition-colors focus:outline-none z-10 bg-white rounded-full shadow-sm p-1 border border-gray-100" title="Scroll Down" onclick="scrollThumbnails(1)">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <!-- Hidden all images for JS to load -->
                     <div id="all-images-data" style="display: none;">
                         {% for image in page.images %}
                             <span class="img-src" data-src="{{ image | relative_url }}"></span>
@@ -52,8 +53,9 @@ layout: default
                     {% endif %}
                 </div>
 
-                <!-- Right: Main product image (1:1, image fills edge-to-edge) -->
-                <div class="bg-[#fdfdfd] border border-gray-100 overflow-hidden aspect-square" id="main-image-container">
+                <!-- Right: Main image — flex:3 width, aspect-ratio 1:1 -->
+                <div class="bg-[#fdfdfd] border border-gray-100 overflow-hidden" id="main-image-container"
+                     style="flex: 3; aspect-ratio: 1 / 1;">
                     {% if page.images %}
                     <img id="main-product-image" src="{{ page.images[0] | relative_url }}"
                          alt="{{ page.title }}"
@@ -147,6 +149,7 @@ layout: default
             const url = imageUrls[i];
             const div = document.createElement('div');
             div.className = 'thumbnail-item bg-[#fdfdfd] border border-gray-100 overflow-hidden cursor-pointer hover:border-[#FCBC66] transition-colors';
+            div.style.flex = '1';
             div.onclick = () => {
                 document.getElementById('main-product-image').src = url;
             };
@@ -154,17 +157,18 @@ layout: default
             const img = document.createElement('img');
             img.src = url;
             img.alt = `Thumbnail ${i + 1}`;
-            img.className = 'object-cover w-full h-full';
+            img.className = 'w-full h-full object-cover';
 
             div.appendChild(img);
             container.appendChild(div);
         }
 
-        // Pad with empty blocks to maintain grid alignment if fewer than 3 images remain
+        // Pad with empty blocks to maintain alignment if fewer than 3 images remain
         const numToPad = 3 - (end - currentStartIndex);
         for (let i = 0; i < numToPad; i++) {
             const div = document.createElement('div');
             div.className = 'thumbnail-item bg-[#fdfdfd] border border-transparent opacity-0 pointer-events-none';
+            div.style.flex = '1';
             container.appendChild(div);
         }
     }
